@@ -6,6 +6,7 @@ import io
 from pygame import mixer
 from gtts import gTTS
 import warnings
+import os
 
 warnings.filterwarnings("ignore")
 load_dotenv()
@@ -107,7 +108,7 @@ class OpenRouterModel:
 
         return ChatMessage(role="assistant", content=text, token_usage=token_usage)
 
-MODEL = "openai/gpt-5-chat"
+MODEL = "meta-llama/llama-3.3-70b-instruct:free"
 search_tool = DuckDuckGoSearchTool()
 agent = CodeAgent(
     tools=[search_tool],
@@ -115,7 +116,7 @@ agent = CodeAgent(
 )
 
 if __name__ == "__main__":
-    print("Welcome to the GPT-5 Code Agent!")
+    print("Welcome to the llama 70B Code Agent!")
     print("You can ask it to write code, search for information, or answer questions.")
     while True:
         try:
@@ -123,13 +124,20 @@ if __name__ == "__main__":
             response = agent.run(prompt).split("Final Answer:")[-1].strip()
             tts = gTTS(response, lang='en')
             
+            wav_path = "assistant_output.wav"
+            tts.save("assistant_output.mp3")
+            
+            os.system(f"ffmpeg -y -i assistant_output.mp3 {wav_path}")
+            print(f"WAV saved as {wav_path} (ready for Rhubarb)")
+            os.system("rhubarb -f json assistant_output.wav -o lipsync.json")
+            
             fp = io.BytesIO()
             tts.write_to_fp(fp)
             fp.seek(0)
             
             mixer.init()
             mixer.music.load(fp, 'mp3')
-            mixer.music.play()
+            # mixer.music.play()
 
             while mixer.music.get_busy():
                 pass
