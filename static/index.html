@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Talking Character — Chat</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+      html, body {
+    height: 100%;
+    margin: 0;
+    background-color: #111; /* fallback */
+    background-image: url('/static/assets/background.jpg'); /* <--- add this */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: #fff;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+    canvas { display:block; width:100vw; height:100vh; }
+    /* chat UI */
+    #chat {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      width: 360px;
+      max-width: calc(100% - 40px);
+      background: rgba(255,255,255,0.04);
+      border-radius: 12px;
+      padding: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      backdrop-filter: blur(6px);
+    }
+    #messages { max-height: 320px; overflow:auto; padding:6px; font-size:14px; }
+    .msg { margin:8px 0; padding:6px 8px; border-radius:8px; display:inline-block; max-width:85%; }
+    .msg.user { background: rgba(40,130,255,0.12); color:#bfe8ff; margin-left:auto; }
+    .msg.assistant { background: rgba(255,200,120,0.07); color:#ffdca8; }
+    #controls { display:flex; gap:6px; margin-top:8px; }
+    #promptInput { flex:1; padding:8px 10px; border-radius:8px; border: none; outline: none; background: rgba(255,255,255,0.03); color:#fff; }
+    button { padding:8px 10px; border-radius:8px; border:none; background:#2b8cff; color:#fff; cursor:pointer; }
+    /* loading overlay */
+    #loadingOverlay {
+      position: fixed;
+      left: 50%; top: 50%;
+      transform: translate(-50%,-50%);
+      display: none;
+      pointer-events: none;
+      z-index: 40;
+    }
+    .spinner {
+      width:64px; height:64px; border-radius:50%;
+      border:6px solid rgba(255,255,255,0.08);
+      border-top-color: rgba(255,255,255,0.9);
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    /* small debug text */
+    #debug { position: fixed; left: 12px; bottom: 12px; color: #aaa; font-size:12px; opacity:0.8; }
+  </style>
+</head>
+<body>
+  <div id="three-root"></div>
+
+  <div id="chat" aria-live="polite">
+    <div id="messages"></div>
+    <div id="controls">
+      <input id="promptInput" placeholder="Ask something..." autocomplete="off" />
+      <button id="sendBtn">Send</button>
+    </div>
+  </div>
+
+  <div id="loadingOverlay" aria-hidden="true">
+    <div class="spinner" title="Thinking..."></div>
+  </div>
+
+  <div id="debug">Backend logs visible in server console.</div>
+
+  <script type="module" src="/static/script.js"></script>
+</body>
+</html>

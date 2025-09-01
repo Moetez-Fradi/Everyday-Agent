@@ -1,0 +1,17 @@
+{
+  "metadata": {
+    "soundFile": "/home/Golden5ragon/Desktop/AI/ARTIFICIAL INTELLIGENCE/Talking-Agents/static/audio/assistant_259df1db4f2b4342bfe98ebf9ff6f177.wav",
+    "duration": 1.96
+  },
+  "mouthCues": [
+    { "start": 0.00, "end": 0.35, "value": "X" },
+    { "start": 0.35, "end": 0.46, "value": "B" },
+    { "start": 0.46, "end": 0.67, "value": "E" },
+    { "start": 0.67, "end": 0.81, "value": "B" },
+    { "start": 0.81, "end": 0.88, "value": "F" },
+    { "start": 0.88, "end": 1.02, "value": "D" },
+    { "start": 1.02, "end": 1.30, "value": "B" },
+    { "start": 1.30, "end": 1.72, "value": "C" },
+    { "start": 1.72, "end": 1.96, "value": "X" }
+  ]
+}

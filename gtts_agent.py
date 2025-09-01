@@ -124,12 +124,12 @@ if __name__ == "__main__":
             response = agent.run(prompt).split("Final Answer:")[-1].strip()
             tts = gTTS(response, lang='en')
             
-            wav_path = "assistant_output.wav"
+            wav_path = "./audio/assistant_output.wav"
             tts.save("assistant_output.mp3")
             
             os.system(f"ffmpeg -y -i assistant_output.mp3 {wav_path}")
             print(f"WAV saved as {wav_path} (ready for Rhubarb)")
-            os.system("rhubarb -f json assistant_output.wav -o lipsync.json")
+            os.system("rhubarb -f json ./audio/assistant_output.wav -o lipsync.json")
             
             fp = io.BytesIO()
             tts.write_to_fp(fp)

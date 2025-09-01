@@ -1,0 +1,132 @@
+/* ---------------------------
+   Global / Canvas / Body
+--------------------------- */
+html, body {
+  height: 100%;
+  margin: 0;
+  background-color: #111; /* fallback */
+  font-family: system-ui, sans-serif;
+  color: #fff;
+  overflow: hidden;
+}
+
+canvas {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+
+body {
+  background-image: url('/static/assets/background.jpg'); /* fixed path */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* ---------------------------
+   Chat UI
+--------------------------- */
+#chat {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 360px;
+  max-width: calc(100% - 48px);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(6px);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  color: #fff;
+  font-size: 14px;
+  z-index: 20;
+}
+
+#messages {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 8px;
+}
+
+.msg {
+  margin: 6px 0;
+  padding: 6px 10px;
+  border-radius: 8px;
+  display: inline-block;
+  max-width: 85%;
+}
+
+.msg.user {
+  text-align: right;
+  background: rgba(40,130,255,0.12);
+  color: #bfe8ff;
+  margin-left: auto;
+}
+
+.msg.assistant {
+  text-align: left;
+  background: rgba(255,200,120,0.07);
+  color: #ffdca8;
+}
+
+#controls {
+  display: flex;
+  gap: 6px;
+}
+
+#promptInput {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background: rgba(255,255,255,0.03);
+  color: #fff;
+}
+
+#controls button {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: none;
+  background: #2b8cff;
+  color: #fff;
+  cursor: pointer;
+}
+
+/* ---------------------------
+   Loading Spinner
+--------------------------- */
+#loadingOverlay {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  display: none;
+  pointer-events: none;
+  z-index: 40;
+}
+
+.spinner {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 6px solid rgba(255,255,255,0.08);
+  border-top-color: rgba(255,255,255,0.9);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------------------------
+   Debug Text
+--------------------------- */
+#debug {
+  position: fixed;
+  left: 12px;
+  bottom: 12px;
+  color: #aaa;
+  font-size: 12px;
+  opacity: 0.8;
+}
