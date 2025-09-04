@@ -1,3 +1,4 @@
 .env
 /talking
-/tools
+/static/audio
+/static/characters

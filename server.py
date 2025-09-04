@@ -1,4 +1,3 @@
-# server.py
 import os
 import json
 import pathlib
@@ -13,14 +12,12 @@ from dotenv import load_dotenv
 from gtts import gTTS
 from tools.list_directory import list_desktop
 
-# your agent imports (keep your existing implementation/module)
 from smolagents import CodeAgent, DuckDuckGoSearchTool
-from gtts_agent import OpenRouterModel  # make sure this path is correct
+from gtts_agent import OpenRouterModel
 
 load_dotenv()
 app = FastAPI()
 
-# Static tree
 ROOT = pathlib.Path(__file__).parent.resolve()
 STATIC_DIR = ROOT / "static"
 AUDIO_DIR = STATIC_DIR / "audio"
@@ -30,15 +27,13 @@ AUDIO_DIR.mkdir(parents=True, exist_ok=True)
 
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
-# Initialize model/agent (reuse your config)
-MODEL = "deepseek/deepseek-chat-v3.1:free"
+MODEL = "openai/gpt-oss-20b:free"
 search_tool = DuckDuckGoSearchTool()
 agent = CodeAgent(
     tools=[search_tool, list_desktop],
     model=OpenRouterModel(MODEL)
 )
 
-# Blocking agent runner offloaded to a thread
 async def run_agent_blocking(prompt: str) -> str:
     def _run():
         print(f"[Agent] Running prompt: {prompt!r}")
@@ -50,12 +45,10 @@ async def run_agent_blocking(prompt: str) -> str:
     return await asyncio.to_thread(_run)
 
 async def make_tts_and_lipsync(text: str):
-    # generate unique basename so concurrent requests don't collide
     uid = uuid.uuid4().hex
     base = f"assistant_{uid}"
     print(f"[TTS] START uid={uid} text_preview={text[:80]!r}")
 
-    # temp mp3
     mp3_tmp = NamedTemporaryFile(delete=False, suffix=".mp3")
     mp3_path = mp3_tmp.name
     mp3_tmp.close()
@@ -69,7 +62,6 @@ async def make_tts_and_lipsync(text: str):
     wav_path = AUDIO_DIR / f"{base}.wav"
     lipsync_path = AUDIO_DIR / f"{base}_lipsync.json"
 
-    # mp3 -> wav
     ffmpeg_cmd = ["ffmpeg", "-y", "-i", mp3_path, str(wav_path)]
     print(f"[FFMPEG] Running: {' '.join(ffmpeg_cmd)}")
     try:
@@ -80,7 +72,7 @@ async def make_tts_and_lipsync(text: str):
         print(f"[FFMPEG] Failed: {out}")
         raise
     dialog_tmp = NamedTemporaryFile(delete=False, suffix=".txt", mode="w", encoding="utf-8")
-    dialog_tmp.write(text)  # your TTS string
+    dialog_tmp.write(text)
     dialog_tmp.close()
     dialog_path = dialog_tmp.name
     
@@ -99,14 +91,12 @@ async def make_tts_and_lipsync(text: str):
     except subprocess.CalledProcessError as e:
         out = e.output.decode() if getattr(e, "output", None) else str(e)
         print(f"[Rhubarb] Failed: {out}")
-        # return WAV and an empty lipsync structure
         try:
             os.remove(mp3_path)
         except Exception:
             pass
         return f"/static/audio/{wav_path.name}", {"mouthCues": []}
 
-    # load JSON
     try:
         with open(lipsync_path, "r", encoding="utf-8") as fh:
             lipsync_json = json.load(fh)
@@ -114,7 +104,6 @@ async def make_tts_and_lipsync(text: str):
         print(f"[Rhubarb] Failed to read JSON: {e}")
         lipsync_json = {"mouthCues": []}
 
-    # cleanup mp3
     try:
         os.remove(mp3_path)
     except Exception as e:
@@ -124,7 +113,6 @@ async def make_tts_and_lipsync(text: str):
     print(f"[TTS] DONE uid={uid}, audio_url={audio_url}, cues={len(lipsync_json.get('mouthCues', []))}")
     return audio_url, lipsync_json
 
-# Basic index route to serve static/index.html if present
 @app.get("/", response_class=HTMLResponse)
 async def index():
     index_file = STATIC_DIR / "index.html"
@@ -133,22 +121,19 @@ async def index():
         return index_file.read_text(encoding="utf-8")
     return "<html><body><h3>Place your index.html in ./static/index.html</h3></body></html>"
 
-# POST /chat : accepts {"prompt": "..."} and returns assistant object
 @app.post("/chat")
 async def chat_endpoint(req: Request):
     body = await req.json()
     prompt_text = body.get("prompt", "")
     print(f"[Chat] Received prompt (len={len(prompt_text)}): {prompt_text!r}")
 
-    # run agent
     try:
         assistant_text = await run_agent_blocking(prompt_text)
         print(f"[Chat] Agent finished (len={len(assistant_text)})")
     except Exception as e:
-        assistant_text = f"Error running agent: {e}"
+        assistant_text = "Error running agent"
         print(f"[Chat] Agent error: {e}")
 
-    # create TTS and lipsync
     try:
         audio_url, lipsync_json = await make_tts_and_lipsync(assistant_text)
     except Exception as e:
