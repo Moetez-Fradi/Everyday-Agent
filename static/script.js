@@ -119,7 +119,7 @@ async function sendPrompt(prompt) {
   loadingOverlay.style.display = 'block';
   console.log('[Client] Sending prompt:', prompt);
   try {
-    const res = await fetch('/chat', {
+    const res = await fetch('http://localhost:8000/chat', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ prompt })
