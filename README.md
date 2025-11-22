@@ -38,3 +38,15 @@ Frequent OOM (on 6GB VRAM)
 ### with Google TTS
 
 Using Google TTS is faster, consistent, and higher quality. The free tier provides 4 million free characters spoken.
+
+## 3) Character
+
+A rigged .glb character model is included under static/character/ (Rigged means the model already contains predefined mouth positions for accurate animation.)
+
+Lip-sync is powered by Rhubarb Lip Sync, using text-based input for improved timing and precision.
+
+## 4) Demo
+
+A demo of the assistant in action is available here:
+
+[![Demo Video](./demo/demo_thumbnail.png)](./demo/demo.mp4)
